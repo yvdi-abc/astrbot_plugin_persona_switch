@@ -146,7 +146,7 @@ Bot: 你没有权限切换到人设: professional
 
 ## 👤 作者
 
-**MiMoCode**
+**yvdi-abc**
 
 ## 🙏 致谢
 
