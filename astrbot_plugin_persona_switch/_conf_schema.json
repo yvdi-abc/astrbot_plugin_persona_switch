@@ -1,0 +1,17 @@
+{
+  "restrict_non_admin": {
+    "description": "限制非管理员用户切换人设",
+    "type": "bool",
+    "default": false
+  },
+  "max_personas_for_non_admin": {
+    "description": "非管理员用户可切换的人设数量上限（0=不限制）",
+    "type": "int",
+    "default": 0
+  },
+  "allowed_personas_for_non_admin": {
+    "description": "非管理员用户可切换的人设ID列表（空=允许所有）",
+    "type": "list",
+    "default": []
+  }
+}

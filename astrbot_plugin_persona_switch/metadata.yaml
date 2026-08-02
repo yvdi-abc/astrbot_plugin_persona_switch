@@ -1,0 +1,6 @@
+name: astrbot_plugin_persona_switch
+display_name: 人设切换
+desc: AstrBot 人设切换插件，支持通过命令快速切换预设人设，支持管理员限制非用户切换权限
+short_desc: 快速切换 AstrBot 人设，支持权限控制
+version: v1.2.0
+author: MiMoCode
