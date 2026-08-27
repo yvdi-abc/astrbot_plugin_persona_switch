@@ -166,7 +166,11 @@ class PersonaSwitchPlugin(Star):
             return None
 
     async def _set_session_persona(self, umo: str, persona_id: str | None) -> bool:
-        """设置/清除会话级人设。persona_id 为 None 时清除。"""
+        """设置/清除会话级人设。persona_id 为 None 时清除。
+
+        使用读-改-写方式，仅修改 persona_id 字段，保留会话的其他配置
+        （如 llm_enabled、tts_enabled 等），避免误删。
+        """
         try:
             svc = await sp.get_async(
                 scope="umo",
@@ -309,20 +313,20 @@ class PersonaSwitchPlugin(Star):
 
         umo = event.unified_msg_origin
         if self._is_session_mode():
-            # 会话级切换
+            # 会话级切换（写入会话存储，立即生效）
             if await self._set_session_persona(umo, target):
-                yield event.plain_result(f"✅ 本会话已切换人设到: **{target}**")
+                yield event.plain_result(f"✅ 本会话已切换人设到: **{target}**（立即生效，无需重启）")
             else:
                 yield event.plain_result("❌ 切换人设失败")
         else:
-            # 全局切换（通过配置 API）
+            # 全局切换（通过配置 API，保存后即时生效）
             config = await self._get_config()
             if not config:
                 yield event.plain_result("❌ 获取配置失败")
                 return
             config.setdefault("provider_settings", {})["default_personality"] = target
             if await self._update_config(config):
-                yield event.plain_result(f"✅ 已全局切换人设到: **{target}**")
+                yield event.plain_result(f"✅ 已全局切换人设到: **{target}**（立即生效，无需重启）")
             else:
                 yield event.plain_result("❌ 切换人设失败")
 
@@ -331,11 +335,11 @@ class PersonaSwitchPlugin(Star):
         """恢复默认人设"""
         umo = event.unified_msg_origin
         if self._is_session_mode():
-            # 清除会话级人设，恢复为跟随全局
+            # 清除会话级人设，恢复为跟随全局（立即生效）
             if await self._set_session_persona(umo, None):
                 global_p = await self._get_global_persona()
                 yield event.plain_result(
-                    f"✅ 本会话已恢复默认人设（当前跟随全局: {global_p}）"
+                    f"✅ 本会话已恢复默认人设（立即生效，当前跟随全局: {global_p}）"
                 )
             else:
                 yield event.plain_result("❌ 恢复人设失败")
@@ -347,7 +351,7 @@ class PersonaSwitchPlugin(Star):
                 return
             config.setdefault("provider_settings", {})["default_personality"] = DEFAULT_PERSONA
             if await self._update_config(config):
-                yield event.plain_result(f"✅ 已恢复全局默认人设: {DEFAULT_PERSONA}")
+                yield event.plain_result(f"✅ 已恢复全局默认人设: {DEFAULT_PERSONA}（立即生效）")
             else:
                 yield event.plain_result("❌ 恢复人设失败")
 
@@ -376,7 +380,7 @@ class PersonaSwitchPlugin(Star):
         umo = event.unified_msg_origin
         if self._is_session_mode():
             if await self._set_session_persona(umo, target):
-                yield event.plain_result(f"🎲 本会话随机切换人设到: **{target}**")
+                yield event.plain_result(f"🎲 本会话随机切换人设到: **{target}**（立即生效，无需重启）")
             else:
                 yield event.plain_result("❌ 切换人设失败")
         else:
@@ -386,7 +390,7 @@ class PersonaSwitchPlugin(Star):
                 return
             config.setdefault("provider_settings", {})["default_personality"] = target
             if await self._update_config(config):
-                yield event.plain_result(f"🎲 已随机切换全局人设到: **{target}**")
+                yield event.plain_result(f"🎲 已随机切换全局人设到: **{target}**（立即生效，无需重启）")
             else:
                 yield event.plain_result("❌ 切换人设失败")
 
