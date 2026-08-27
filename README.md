@@ -1,6 +1,6 @@
 # AstrBot 人设切换插件
 
-[![Version](https://img.shields.io/badge/version-v1.3.0-blue.svg)](https://github.com/yvdi-abc/astrbot_plugin_persona_switch)
+[![Version](https://img.shields.io/badge/version-v1.3.1-blue.svg)](https://github.com/yvdi-abc/astrbot_plugin_persona_switch)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![AstrBot](https://img.shields.io/badge/AstrBot-Plugin-orange.svg)](https://github.com/Soulter/AstrBot)
 
@@ -98,13 +98,13 @@ Bot: 📋 **猫娘**
 
 ## 🔧 工作原理
 
-### 会话级人设
+### 会话级人设（热重载）
 
-插件通过 AstrBot 的会话存储（`SharedPreferences`）为每个会话（群/私聊）独立记录 `persona_id`，该值的优先级**高于**全局默认人设。切换只影响当前会话，不影响其他会话。
+插件通过 AstrBot 的会话存储（`SharedPreferences`）为每个会话（群/私聊）独立记录 `persona_id`，该值的优先级**高于**全局默认人设。AstrBot 在**每次 LLM 请求时都会实时读取**会话配置，因此切换后**立即生效，无需重启**。
 
-### 全局人设
+### 全局人设（热重载）
 
-关闭 `session_mode` 后，插件通过 AstrBot 配置 API 修改全局 `default_personality`，所有会话生效。
+关闭 `session_mode` 后，插件通过 AstrBot 配置 API 修改全局 `default_personality`。配置保存时会同步更新 AstrBot 内存中的配置对象，**同样即时生效，无需重启**。
 
 ## 📝 注意事项
 
@@ -112,8 +112,13 @@ Bot: 📋 **猫娘**
 - 人设列表中的描述取自各人设 `system_prompt` 的首行
 - 非管理员权限限制仅在 `restrict_non_admin` 开启时生效
 - 全局模式下切换会写入 AstrBot 主配置，请谨慎操作
+- **热重载**：所有切换/恢复/随机操作均立即生效，无需重启 AstrBot
 
 ## 🔄 更新日志
+
+### v1.3.1
+- ⚡ **热重载确认**：会话级与全局切换均立即生效，无需重启（AstrBot 每次 LLM 请求实时读取会话/全局配置）
+- ✨ 切换/恢复/随机回复中明确提示"立即生效，无需重启"
 
 ### v1.3.0
 - ✨ **新增会话级人设模式**：每个群/私聊独立切换人设，互不影响（`session_mode` 配置）
