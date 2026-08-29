@@ -94,8 +94,15 @@ class PersonaSwitchPlugin(Star):
             "Content-Type": "application/json",
         }
 
-    async def _get_config(self) -> dict:
-        """获取 AstrBot 全局配置。"""
+    async def _get_config(self) -> dict | None:
+        """获取 AstrBot 全局配置（进程内真实配置，非出厂模板）。"""
+        try:
+            cfg = self.context.get_config()
+            if cfg:
+                return dict(cfg)
+        except Exception as e:
+            logger.error(f"获取配置异常: {e}")
+        # 兜底：HTTP API（仅当 context 不可用时）
         try:
             headers = await self._get_headers()
             async with httpx.AsyncClient() as client:
@@ -112,7 +119,21 @@ class PersonaSwitchPlugin(Star):
         return None
 
     async def _update_config(self, config: dict) -> bool:
-        """更新 AstrBot 全局配置。"""
+        """更新 AstrBot 全局配置（进程内保存，仅改 default_personality，不覆盖其他配置）。"""
+        try:
+            cfg = self.context.get_config()
+            if cfg is None:
+                raise ValueError("context.get_config() 返回 None")
+            # 仅更新人设字段，保留用户其他配置（provider、密钥等）
+            cfg.setdefault("provider_settings", {})["default_personality"] = (
+                config.get("provider_settings", {}).get("default_personality")
+            )
+            cfg.save_config()
+            logger.info(f"[人设切换] 全局人设已更新为: {config.get('provider_settings', {}).get('default_personality')}")
+            return True
+        except Exception as e:
+            logger.error(f"更新配置异常: {e}")
+        # 兜底：HTTP API（仅当进程内保存失败时）
         try:
             headers = await self._get_headers()
             async with httpx.AsyncClient() as client:
