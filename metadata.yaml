@@ -4,4 +4,14 @@ desc: AstrBot 人设切换插件，支持通过命令快速切换预设人设，
 short_desc: 快速切换 AstrBot 人设，支持权限控制
 version: v1.3.1
 author: yvdi-abc
-astrbot_version: ">=4.16,<5"
+repo: https://github.com/yvdi-abc/astrbot_plugin_persona_switch.git
+astrbot_version: \>=4.16,\<5
+support_platforms:
+  - aiocqhttp
+  - telegram
+  - discord
+tags:
+  - persona
+  - role
+  - tools
+  - permissions
