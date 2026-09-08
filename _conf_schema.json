@@ -1,0 +1,29 @@
+{
+  "session_mode": {
+    "description": "会话级人设模式：开启后每个群/私聊独立切换人设互不影响；关闭后切换全局人设所有会话生效",
+    "type": "bool",
+    "default": true,
+    "hint": "推荐开启：A群切换不影响B群"
+  },
+  "show_desc": {
+    "description": "人设列表中是否显示人设描述（system_prompt 首行）",
+    "type": "bool",
+    "default": true,
+    "hint": "开启后列表更直观，关闭后更简洁"
+  },
+  "restrict_non_admin": {
+    "description": "限制非管理员切换人设",
+    "type": "bool",
+    "default": false
+  },
+  "max_personas_for_non_admin": {
+    "description": "非管理员可切换的人设数量上限（0=不限制）",
+    "type": "int",
+    "default": 0
+  },
+  "allowed_personas_for_non_admin": {
+    "description": "非管理员可切换的人设ID列表（空=允许所有）",
+    "type": "list",
+    "default": []
+  }
+}
